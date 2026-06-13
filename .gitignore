@@ -1,0 +1,61 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Distribution / packaging ---
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# --- Environment & secrets ---
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# --- IDE / editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Testing & coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# --- Project-specific ---
+# Local SQLite database file(s)
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded resume files during dev
+uploads/
+sample_data/private/
+
+# Logs
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
