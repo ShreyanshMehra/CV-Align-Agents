@@ -1,17 +1,7 @@
-# Core web framework
-fastapi>=0.115,<0.116
-uvicorn[standard]>=0.32,<0.33
-python-multipart>=0.0.12,<0.1
-
-# Data validation / config
-pydantic>=2.9,<3.0
-pydantic-settings>=2.6,<3.0
-python-dotenv>=1.0,<2.0
-
-# LLM orchestration
-langgraph>=0.2.50,<0.3
-langchain-core>=0.3.20,<0.4
-langchain-google-genai>=2.0.5,<3.0
-
-# PDF parsing
-pypdf>=5.1,<6.0
+# Dependencies are declared in pyproject.toml (single source of truth).
+# Installing this file installs the package in editable mode with all deps:
+#   pip install -r requirements.txt
+# Optional extras:
+#   pip install -e ".[dev]"    # test/lint tooling
+#   pip install -e ".[groq]"   # enable the Groq LLM provider
+-e .

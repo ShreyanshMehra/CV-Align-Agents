@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cv-align-agents"
+version = "0.1.0"
+description = "Multi-agent resume screening pipeline (LangGraph + Gemini) served via FastAPI."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Shreyansh Dutt Mehra", email = "shreyanshduttmehra@gmail.com" }]
+keywords = ["llm", "agents", "langgraph", "resume-screening", "fastapi", "gemini"]
+
+dependencies = [
+    "fastapi>=0.115,<0.116",
+    "uvicorn[standard]>=0.32,<0.33",
+    "python-multipart>=0.0.12,<0.1",
+    "pydantic>=2.9,<3.0",
+    "pydantic-settings>=2.6,<3.0",
+    "python-dotenv>=1.0,<2.0",
+    "langgraph>=0.2.50,<0.3",
+    "langchain-core>=0.3.20,<0.4",
+    "langchain-google-genai>=2.0.5,<3.0",
+    "pypdf>=5.1,<6.0",
+]
+
+[project.optional-dependencies]
+# `pip install -e ".[groq]"` to enable the Groq provider.
+groq = ["langchain-groq>=0.2,<0.3"]
+# `pip install -e ".[dev]"` for the test/lint toolchain.
+dev = [
+    "pytest>=8.3,<9.0",
+    "pytest-asyncio>=0.24,<0.25",
+    "ruff>=0.7,<0.8",
+]
+
+[project.urls]
+Repository = "https://github.com/ShreyanshMehra/CV-Align-Agents"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src", "tests"]
