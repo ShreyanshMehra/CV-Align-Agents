@@ -192,6 +192,7 @@ class PipelineConfig(BaseModel):
     mode: Mode = "recruiter"
     critic_mode: CriticMode = "full"
     critic_top_k: int = Field(default=5, ge=1)
+    enable_critic: bool = True
     weights: dict[str, float] = Field(default_factory=lambda: dict(DEFAULT_WEIGHTS))
     max_retries: int = Field(default=1, ge=0)
     confidence_threshold: float = Field(default=0.6, ge=0.0, le=1.0)
@@ -311,3 +312,16 @@ class CandidateResult(BaseModel):
             hygiene_score=hygiene_score,
             hygiene_issues=hygiene_issues,
         )
+
+
+class ScreeningResult(BaseModel):
+    """The full response for a screening request (one or more candidates)."""
+
+    mode: Mode
+    job_title: str | None = None
+    candidates: list[CandidateResult] = Field(default_factory=list)
+
+    @property
+    def top(self) -> CandidateResult | None:
+        """The highest-scoring candidate, if any."""
+        return self.candidates[0] if self.candidates else None

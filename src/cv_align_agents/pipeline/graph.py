@@ -131,6 +131,11 @@ def build_pipeline(llm: BaseChatModel | None = None):
             return "retry"
         return "end"
 
+    def route_after_hygiene(state: PipelineState) -> str:
+        # Fast mode (enable_critic=False) ends after scoring + hygiene; the
+        # critic is run separately on only the top-K ranked candidates.
+        return "critic" if state.config.enable_critic else "end"
+
     graph = StateGraph(PipelineState)
     graph.add_node("parse_resume", parse_resume_node)
     graph.add_node("parse_jd", parse_jd_node)
@@ -145,7 +150,11 @@ def build_pipeline(llm: BaseChatModel | None = None):
     graph.add_edge("parse_jd", "match")
     graph.add_edge("match", "score")
     graph.add_edge("score", "check_hygiene")
-    graph.add_edge("check_hygiene", "critic")
+    graph.add_conditional_edges(
+        "check_hygiene",
+        route_after_hygiene,
+        {"critic": "critic", "end": END},
+    )
     graph.add_conditional_edges(
         "critic",
         route_after_critic,
