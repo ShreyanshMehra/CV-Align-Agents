@@ -154,6 +154,29 @@ class Critique(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
+# Hygiene report (deterministic, objective resume checks)
+# --------------------------------------------------------------------------- #
+class HygieneIssue(BaseModel):
+    """A single objective issue found by the deterministic hygiene checker."""
+
+    check: str
+    severity: Literal["info", "warning"]
+    message: str
+
+
+class HygieneReport(BaseModel):
+    """Objective resume-quality signal, independent of JD match.
+
+    This is advisory: it informs the critic's suggestions and is surfaced to
+    candidates, but it does NOT change the JD-match ``FinalScore``.
+    """
+
+    score: float = Field(default=1.0, ge=0.0, le=1.0)
+    issues: list[HygieneIssue] = Field(default_factory=list)
+    positives: list[str] = Field(default_factory=list)
+
+
+# --------------------------------------------------------------------------- #
 # Configuration
 # --------------------------------------------------------------------------- #
 class PipelineConfig(BaseModel):
@@ -219,6 +242,7 @@ class PipelineState(BaseModel):
     jd_structured: StructuredJD | None = None
     match_result: MatchResult | None = None
     final_score: FinalScore | None = None
+    hygiene: HygieneReport | None = None
     critique: Critique | None = None
 
     # Self-correction bookkeeping (cap lives in config.max_retries)
@@ -258,6 +282,8 @@ class CandidateResult(BaseModel):
     breakdown: dict[str, float] = Field(default_factory=dict)
     gaps: list[str] = Field(default_factory=list)
     suggestions: list[str] = Field(default_factory=list)
+    hygiene_score: float | None = None
+    hygiene_issues: list[str] = Field(default_factory=list)
 
     @classmethod
     def from_state(cls, state: PipelineState) -> CandidateResult:
@@ -268,6 +294,12 @@ class CandidateResult(BaseModel):
         gaps = state.critique.gaps if state.critique else []
         suggestions = state.critique.suggestions if state.critique else []
         name = state.resume_structured.name if state.resume_structured else None
+        hygiene_score = state.hygiene.score if state.hygiene else None
+        hygiene_issues = (
+            [issue.message for issue in state.hygiene.issues]
+            if state.hygiene
+            else []
+        )
         return cls(
             filename=state.resume_raw.filename,
             candidate_name=name,
@@ -276,4 +308,6 @@ class CandidateResult(BaseModel):
             breakdown=breakdown,
             gaps=gaps,
             suggestions=suggestions,
+            hygiene_score=hygiene_score,
+            hygiene_issues=hygiene_issues,
         )
