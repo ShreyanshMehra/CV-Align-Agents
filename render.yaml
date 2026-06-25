@@ -1,0 +1,19 @@
+# Render Blueprint — deploy with one click from the Render dashboard.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: cv-align-agents
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # Set this in the Render dashboard (do NOT commit your key).
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: LLM_MODEL
+        value: gemini-2.5-flash
+      # Free-tier disk is ephemeral; keep the SQLite file in /tmp.
+      - key: DB_PATH
+        value: /tmp/runs.db

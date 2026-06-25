@@ -24,6 +24,7 @@ keeps behavior reproducible wherever possible.
 | JD text → structured requirements | agent |
 | Resume ↔ JD section matching | agent |
 | Sub-scores → final score | function (weighted sum) |
+| Objective resume-quality checks (hygiene) | function (rule-based) |
 | Gaps / suggestions / verdict | agent |
 
 ## Pipeline
@@ -60,6 +61,31 @@ keeps behavior reproducible wherever possible.
               │  Report  │  score + rationale + gaps + verdict
               └──────────┘
 ```
+
+> The deterministic **hygiene** function runs between the scorer and the critic;
+> it is omitted from the box diagram above for space but feeds the critic and the
+> final report.
+
+## Orchestration & personas
+
+A higher layer (`pipeline/screen.py`) serves two personas from one engine:
+
+- **candidate** — one resume, full critic feedback to improve the CV.
+- **recruiter** — many resumes ranked against one JD. In `full` critic mode every
+  candidate is critiqued; in `fast` mode the resumes are scored first and only
+  the **top-K** are critiqued, saving LLM calls at scale.
+
+The JD is parsed once and reused across all resumes (the parser nodes are
+idempotent), and resumes are processed concurrently with `asyncio`. The
+`enable_critic` flag drives a conditional edge after the hygiene node so fast
+mode can skip the inline critic and critique only the top-K ranked candidates.
+
+## Persistence
+
+Each screening run is stored by `storage/runs.py` (standard-library `sqlite3`,
+no extra dependency) as a row containing the full JSON result, retrievable via
+`GET /runs/{id}` and listed via `GET /runs`. A fresh connection is opened per
+operation, keeping the store safe to call from FastAPI's worker threads.
 
 ## Design decisions
 
