@@ -77,6 +77,13 @@ def test_health():
     assert resp.json()["status"] == "ok"
 
 
+def test_root_redirects_to_docs():
+    c = TestClient(app)
+    resp = c.get("/", follow_redirects=False)
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"] == "/docs"
+
+
 def test_screen_recruiter_ranks_candidates(client):
     pdf = _blank_pdf_bytes()
     files = [

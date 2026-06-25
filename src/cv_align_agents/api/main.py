@@ -17,6 +17,7 @@ from functools import lru_cache
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import RedirectResponse
 from langchain_core.language_models import BaseChatModel
 from pydantic import ValidationError
 
@@ -58,6 +59,13 @@ def _default_store() -> RunStore:
 def get_store() -> RunStore:
     """Run-store dependency. Tests override this with a temp-file store."""
     return _default_store()
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    # Land visitors (and the Hugging Face Space iframe) on the interactive docs,
+    # where they can try POST /screen directly.
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")
