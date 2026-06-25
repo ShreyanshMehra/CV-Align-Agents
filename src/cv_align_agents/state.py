@@ -317,6 +317,8 @@ class CandidateResult(BaseModel):
 class ScreeningResult(BaseModel):
     """The full response for a screening request (one or more candidates)."""
 
+    run_id: str | None = None
+    created_at: str | None = None
     mode: Mode
     job_title: str | None = None
     candidates: list[CandidateResult] = Field(default_factory=list)

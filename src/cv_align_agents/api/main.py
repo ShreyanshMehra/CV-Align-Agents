@@ -12,21 +12,26 @@ The persona is selected with the ``mode`` field: ``candidate`` (CV feedback) or
 
 from __future__ import annotations
 
-from langchain_core.language_models import BaseChatModel
+import asyncio
+from functools import lru_cache
+
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from langchain_core.language_models import BaseChatModel
 from pydantic import ValidationError
 
 from cv_align_agents import __version__
 from cv_align_agents.llm.client import LLMConfigError
 from cv_align_agents.pdf import PDFExtractionError, extract_text_from_pdf
 from cv_align_agents.pipeline.screen import screen
+from cv_align_agents.settings import get_settings
 from cv_align_agents.state import (
     JDRaw,
     PipelineConfig,
     ResumeRaw,
     ScreeningResult,
 )
+from cv_align_agents.storage.runs import RunStore
 
 load_dotenv()
 
@@ -45,6 +50,16 @@ def get_llm() -> BaseChatModel | None:
     return None
 
 
+@lru_cache(maxsize=1)
+def _default_store() -> RunStore:
+    return RunStore(get_settings().db_path)
+
+
+def get_store() -> RunStore:
+    """Run-store dependency. Tests override this with a temp-file store."""
+    return _default_store()
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "version": __version__}
@@ -58,6 +73,7 @@ async def screen_endpoint(
     critic_top_k: int = Form(5, ge=1),
     resumes: list[UploadFile] = File(..., description="Resume PDF file(s)."),
     llm: BaseChatModel | None = Depends(get_llm),
+    store: RunStore = Depends(get_store),
 ) -> ScreeningResult:
     if not jd.strip():
         raise HTTPException(status_code=422, detail="Job description is empty.")
@@ -89,7 +105,30 @@ async def screen_endpoint(
         )
 
     try:
-        return await screen(resume_inputs, JDRaw(text=jd), config, llm=llm)
+        result = await screen(resume_inputs, JDRaw(text=jd), config, llm=llm)
     except LLMConfigError as exc:
         # Misconfiguration (e.g. missing API key) -> 503 with a clear message.
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    await asyncio.to_thread(store.save, result)  # sets run_id + created_at
+    return result
+
+
+@app.get("/runs/{run_id}", response_model=ScreeningResult)
+async def get_run(
+    run_id: str,
+    store: RunStore = Depends(get_store),
+) -> ScreeningResult:
+    result = await asyncio.to_thread(store.get, run_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
+    return result
+
+
+@app.get("/runs")
+async def list_runs(
+    limit: int = 50,
+    store: RunStore = Depends(get_store),
+) -> dict:
+    runs = await asyncio.to_thread(store.list_runs, limit)
+    return {"runs": runs}

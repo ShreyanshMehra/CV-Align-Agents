@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     # --- Application ---
     app_env: str = Field(default="development")
     log_level: str = Field(default="INFO")
+    db_path: str = Field(default="runs.db")
 
 
 @lru_cache(maxsize=1)
