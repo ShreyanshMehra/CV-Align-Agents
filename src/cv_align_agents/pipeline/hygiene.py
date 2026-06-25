@@ -117,7 +117,7 @@ def _check_links(combined, issues, positives) -> None:
             "info",
             "No LinkedIn link found; consider adding your profile URL.",
         )
-    if not has_any_url:
+    if not has_any_url and not has_github and not has_linkedin:
         _add(
             issues,
             "no_links",

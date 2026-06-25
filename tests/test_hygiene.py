@@ -90,6 +90,16 @@ def test_placeholder_url_flagged():
     assert any(i.check == "placeholder_url" for i in report.issues)
 
 
+def test_bare_domain_links_not_flagged_as_no_links():
+    # Links without an http(s):// prefix (e.g. "github.com/x") still count as
+    # links; "no_links" must not fire when GitHub/LinkedIn are present.
+    resume = _strong_resume()
+    report = check_hygiene(resume, raw_text="github.com/jane linkedin.com/in/jane")
+    checks = {i.check for i in report.issues}
+    assert "no_links" not in checks
+    assert "missing_github" not in checks
+
+
 def test_score_never_negative():
     # An almost-empty resume accrues many penalties but score stays >= 0.
     report = check_hygiene(StructuredResume(), raw_text="")
