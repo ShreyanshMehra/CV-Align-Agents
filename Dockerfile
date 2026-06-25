@@ -3,7 +3,8 @@ FROM python:3.12-slim
 # Don't write .pyc files; flush stdout/stderr immediately.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PORT=8000 \
+    DB_PATH=/tmp/runs.db
 
 WORKDIR /app
 

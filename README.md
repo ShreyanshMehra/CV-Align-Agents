@@ -1,3 +1,14 @@
+---
+title: CV-Align-Agents
+emoji: 📄
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8000
+pinned: false
+license: mit
+---
+
 # CV-Align-Agents
 
 > Multi-agent resume screening pipeline built with **LangGraph** and **Gemini**, served via **FastAPI**.
@@ -157,7 +168,8 @@ src/cv_align_agents/
 
 ## Deployment
 
-The app ships with a `Dockerfile` and a Render blueprint (`render.yaml`).
+The app ships with a `Dockerfile` (used by Hugging Face Spaces) and a Render
+blueprint (`render.yaml`).
 
 ```bash
 # Build and run locally with Docker
@@ -165,10 +177,15 @@ docker build -t cv-align-agents .
 docker run -p 8000:8000 -e GOOGLE_API_KEY=your-key cv-align-agents
 ```
 
-**Render (free tier):** push to GitHub, create a new Blueprint from the repo,
-and set `GOOGLE_API_KEY` in the dashboard. The blueprint wires `/health` checks
-and keeps the SQLite file in `/tmp` (free-tier disk is ephemeral, so run history
-resets on redeploy — fine for a demo).
+**Hugging Face Spaces (recommended, free):** the `README.md` front-matter
+configures a Docker Space (`app_port: 8000`). Create a new **Docker** Space,
+push this repo to it, and add `GOOGLE_API_KEY` as a Space **secret**. The Space
+sleeps only after 48h idle, so a portfolio link is usually warm.
+
+**Render (free tier):** create a new Blueprint from the repo and set
+`GOOGLE_API_KEY` in the dashboard. Note: free services spin down after 15 min
+idle. Either platform keeps the SQLite file in `/tmp` (ephemeral — run history
+resets on redeploy, which is fine for a demo).
 
 ## License
 
