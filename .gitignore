@@ -52,6 +52,8 @@ coverage.xml
 # Uploaded resume files during dev
 uploads/
 sample_data/private/
+# Resume PDFs are user data / test artifacts — never commit them
+*.pdf
 
 # Logs
 *.log
