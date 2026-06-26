@@ -9,9 +9,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install dependencies first for better layer caching.
+# Include the [groq] extra so the Groq provider is available in the image.
 COPY pyproject.toml requirements.txt README.md LICENSE ./
 COPY src ./src
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir -e ".[groq]"
 
 EXPOSE 8000
 
