@@ -1,0 +1,307 @@
+/* CV-Align-Agents frontend — clean, no animations. */
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #e2e5ea;
+  --text: #1f2430;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --strong: #16a34a;
+  --moderate: #d97706;
+  --weak: #dc2626;
+  --bar-bg: #eceef2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.container {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 0;
+}
+
+.site-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+
+.tagline {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+}
+
+.form-card {
+  margin-top: 26px;
+}
+
+/* Form */
+.field {
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+textarea,
+select,
+input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+textarea:focus,
+select:focus,
+input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.hint {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 11px 20px;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--accent-hover);
+}
+
+.btn:disabled {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Status */
+.status {
+  margin-top: 22px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+}
+
+.status.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: var(--weak);
+}
+
+/* Results */
+.results {
+  margin: 24px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.results-summary {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.candidate {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.candidate-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.candidate-name {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.candidate-file {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.score {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.badge.strong_fit {
+  background: var(--strong);
+}
+.badge.moderate_fit {
+  background: var(--moderate);
+}
+.badge.weak_fit {
+  background: var(--weak);
+}
+
+/* Breakdown bars */
+.breakdown {
+  margin: 16px 0;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.bar-label {
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  color: var(--muted);
+}
+
+.bar-track {
+  height: 10px;
+  background: var(--bar-bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.bar-value {
+  font-size: 0.82rem;
+  text-align: right;
+  color: var(--muted);
+}
+
+/* Lists */
+.section-title {
+  margin: 16px 0 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.candidate ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.candidate li {
+  margin-bottom: 4px;
+  font-size: 0.92rem;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.hygiene-line {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 18px 0;
+}
+
+.site-footer .container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.site-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@media (max-width: 560px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

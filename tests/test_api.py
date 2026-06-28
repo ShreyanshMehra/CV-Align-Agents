@@ -77,11 +77,20 @@ def test_health():
     assert resp.json()["status"] == "ok"
 
 
-def test_root_redirects_to_docs():
+def test_root_serves_frontend():
     c = TestClient(app)
-    resp = c.get("/", follow_redirects=False)
-    assert resp.status_code in (302, 307)
-    assert resp.headers["location"] == "/docs"
+    resp = c.get("/")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers["content-type"]
+    assert "CV-Align-Agents" in resp.text
+
+
+def test_static_assets_served():
+    c = TestClient(app)
+    css = c.get("/static/style.css")
+    assert css.status_code == 200
+    js = c.get("/static/app.js")
+    assert js.status_code == 200
 
 
 def test_screen_recruiter_ranks_candidates(client):

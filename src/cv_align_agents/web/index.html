@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV-Align-Agents — Resume Screening</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>CV-Align-Agents</h1>
+      <p class="tagline">
+        Multi-agent resume screening against a job description — with scores,
+        evidence, gaps, and suggestions.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card form-card">
+      <form id="screen-form">
+        <div class="field">
+          <label for="jd">Job description</label>
+          <textarea id="jd" name="jd" rows="7"
+            placeholder="Paste the full job description here..." required></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="mode">Mode</label>
+            <select id="mode" name="mode">
+              <option value="candidate">Candidate — improve my CV</option>
+              <option value="recruiter">Recruiter — rank resumes</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="critic_mode">Critic</label>
+            <select id="critic_mode" name="critic_mode">
+              <option value="full">Full — critique every resume</option>
+              <option value="fast">Fast — critique top candidates only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="resumes">Resume PDF(s)</label>
+          <input type="file" id="resumes" name="resumes" accept="application/pdf"
+            multiple required />
+          <p class="hint">Candidate mode: one PDF. Recruiter mode: select several.</p>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn">Screen resumes</button>
+      </form>
+    </section>
+
+    <section id="status" class="status" hidden></section>
+
+    <section id="results" class="results"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>Built with LangGraph + FastAPI.</span>
+      <a href="/docs">API docs</a>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

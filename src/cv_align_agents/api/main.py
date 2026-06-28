@@ -14,10 +14,12 @@ from __future__ import annotations
 
 import asyncio
 from functools import lru_cache
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from langchain_core.language_models import BaseChatModel
 from pydantic import ValidationError
 
@@ -42,6 +44,10 @@ app = FastAPI(
     summary="Multi-agent resume screening (LangGraph + Gemini).",
 )
 
+# Serve the static frontend (HTML/CSS/JS) bundled alongside the package.
+WEB_DIR = Path(__file__).resolve().parent.parent / "web"
+app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+
 
 def get_llm() -> BaseChatModel | None:
     """LLM dependency. Returns ``None`` so agents use the configured provider.
@@ -62,10 +68,9 @@ def get_store() -> RunStore:
 
 
 @app.get("/", include_in_schema=False)
-def root() -> RedirectResponse:
-    # Land visitors (and the Hugging Face Space iframe) on the interactive docs,
-    # where they can try POST /screen directly.
-    return RedirectResponse(url="/docs")
+def root() -> FileResponse:
+    # Serve the single-page frontend. The interactive API docs stay at /docs.
+    return FileResponse(WEB_DIR / "index.html")
 
 
 @app.get("/health")
